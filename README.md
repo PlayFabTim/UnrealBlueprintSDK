@@ -96,7 +96,7 @@ LogPlayFab: Response : {
     "data":
     {
         "PlayFabId": "7F10A25FDB140A4C",
-        "SessionTicket": "7F10A25FDB140A4C--792AC18422792A58-88E-8D328541EF97CF2-B9A2C17305BD086E.49D562D78F4038F4",
+        "SessionTicket": "LONG_SESSION_TICKET",
         "Username": "myusername",
         "SettingsForUser":
         {
@@ -104,8 +104,9 @@ LogPlayFab: Response : {
         }
     }
 }
-LogBlueprintUserMessages: [Test_C_1] Register Success: {"code":200,"status":"OK","data":{"PlayFabId":"7F10A25FDB140A4C",
-"SessionTicket":"7F10A25FDB140A4C--792AC18422792A58-88E-8D328541EF97CF2-B9A2C17305BD086E.49D562D78F4038F4",
+LogBlueprintUserMessages: [Test_C_1] Register Success:
+{"code":200,"status":"OK","data":{"PlayFabId":"7F10A25FDB140A4C",
+"SessionTicket":"LONG_SESSION_TICKET",
 "Username":"myusername","SettingsForUser":{"NeedsAttribution":false}}}
 ```
 
@@ -136,7 +137,7 @@ LogPlayFab: Response : {
     "status": "OK",
     "data":
     {
-        "SessionTicket": "EDC7CAE0DCB6FA8F-0-0-88E-8D328543DAC8051-26E02E5BF2C832C3.CDD203B8B8749F9C",
+        "SessionTicket": "LONG_SESSION_TICKET",
         "PlayFabId": "EDC7CAE0DCB6FA8F",
         "NewlyCreated": false,
         "SettingsForUser":
@@ -147,7 +148,7 @@ LogPlayFab: Response : {
     }
 }
 LogBlueprintUserMessages: [Test_C_1] Login Success:
-SessionTicket=EDC7CAE0DCB6FA8F-0-0-88E-8D328543DAC8051-26E02E5BF2C832C3.CDD203B8B8749F9C PlayFabId=EDC7CAE0DCB6FA8F
+SessionTicket=LONG_SESSION_TICKET PlayFabId=EDC7CAE0DCB6FA8F
 ```
 
 
