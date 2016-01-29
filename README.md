@@ -60,6 +60,63 @@ Existing Projects:
 * In Visual Studio, "Rebuild Solution" - This process may take several minutes
 * You should now be able to create blueprints that utilize PlayFab API calls
 
+# Blueprint Custom Events
+
+Follow the `Blueprint Tutorial` below to populate the `Game Title Id` before invoking the following `Blueprint Custom Events`.
+
+## TestRegister
+
+`TestRegister` is a custom event that registers a user given the `username`, `email`, and `password`.
+
+![00_TestRegisterBlueprint](Images/00_TestRegisterBlueprint.png)
+
+The custom event can be invoked in the console with the following line.
+
+```
+ce TestRegister "myUsername" "email@email.com" password
+```
+
+## TestLogin
+
+`TestLogin` is a custom event that will login a user given the corresponding `email` and `password`. A user must be registered before a successful login can occur.
+
+![01_TestLoginBlueprint](Images/01_TestLoginBlueprint.png)
+
+The custom event can be invoked in the console with the following line.
+
+```
+ce TestLogin "email@email.com" password
+```
+
+
+## GetCloudScriptUrl
+
+`GetCloudScriptUrl` is a custom event that will request a cloud script url given no parameters.
+
+![02_GetCloudScriptUrlBlueprint](Images/02_GetCloudScriptUrlBlueprint.png)
+
+The custom event can be invoked in the console with the following line.
+
+```
+ce GetCloudScriptUrl
+```
+
+## TestCloudScript
+
+`GetCloudScriptUrl` is a custom event that will execute cloud script given no parameters. For this test to work, the following custom cloud script must be added to return a success result.
+
+```
+handlers.testMe = function(args){  return "Hello World" }
+```
+
+![03_TestCloudScriptBlueprint](Images/03_TestCloudScriptBlueprint.png)
+
+The custom event can be invoked in the console with the following line.
+
+```
+ce TestCloudScript
+```
+
 
 5. Blueprint Tutorial:
 ----
