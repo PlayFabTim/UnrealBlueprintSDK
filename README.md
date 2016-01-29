@@ -76,6 +76,40 @@ The custom event can be invoked in the console with the following line.
 ce TestRegister "myUsername" "email@email.com" password
 ```
 
+The output log should print output similar to the following for a success event.
+
+```
+Cmd: ce TestRegister "myUsername" "email@email.com" password
+LogBlueprintUserMessages: [Test_C_1] Registering User=myUsername Email=email@email.com Password=password
+LogPlayFab: Request: {
+    "TitleId": "YOUR_GAME_TITLE_ID",
+    "Username": "myUsername",
+    "Email": "email@email.com",
+    "Password": "password",
+    "RequireBothUsernameAndEmail": false,
+    "DisplayName": null,
+    "Origination": null
+}
+LogPlayFab: Response : {
+    "code": 200,
+    "status": "OK",
+    "data":
+    {
+        "PlayFabId": "7F10A25FDB140A4C",
+        "SessionTicket": "7F10A25FDB140A4C--792AC18422792A58-88E-8D328541EF97CF2-B9A2C17305BD086E.49D562D78F4038F4",
+        "Username": "myusername",
+        "SettingsForUser":
+        {
+            "NeedsAttribution": false
+        }
+    }
+}
+LogBlueprintUserMessages: [Test_C_1] Register Success: {"code":200,"status":"OK","data":{"PlayFabId":"7F10A25FDB140A4C",
+"SessionTicket":"7F10A25FDB140A4C--792AC18422792A58-88E-8D328541EF97CF2-B9A2C17305BD086E.49D562D78F4038F4",
+"Username":"myusername","SettingsForUser":{"NeedsAttribution":false}}}
+```
+
+
 ## TestLogin
 
 `TestLogin` is a custom event that will login a user given the corresponding `email` and `password`. A user must be registered before a successful login can occur.
@@ -86,6 +120,34 @@ The custom event can be invoked in the console with the following line.
 
 ```
 ce TestLogin "email@email.com" password
+```
+
+The output log should print output similar to the following for a success event.
+
+```
+Cmd: ce TestLogin "email@email.com" password
+LogPlayFab: Request: {
+    "TitleId": "YOUR_GAME_TITLE_ID",
+    "Email": "email@email.com",
+    "Password": "password"
+}
+LogPlayFab: Response : {
+    "code": 200,
+    "status": "OK",
+    "data":
+    {
+        "SessionTicket": "EDC7CAE0DCB6FA8F-0-0-88E-8D328543DAC8051-26E02E5BF2C832C3.CDD203B8B8749F9C",
+        "PlayFabId": "EDC7CAE0DCB6FA8F",
+        "NewlyCreated": false,
+        "SettingsForUser":
+        {
+            "NeedsAttribution": false
+        },
+        "LastLoginTime": "2016-01-29T02:18:16.692Z"
+    }
+}
+LogBlueprintUserMessages: [Test_C_1] Login Success:
+SessionTicket=EDC7CAE0DCB6FA8F-0-0-88E-8D328543DAC8051-26E02E5BF2C832C3.CDD203B8B8749F9C PlayFabId=EDC7CAE0DCB6FA8F
 ```
 
 
@@ -101,6 +163,27 @@ The custom event can be invoked in the console with the following line.
 ce GetCloudScriptUrl
 ```
 
+The output log should print output similar to the following for a success event.
+
+```
+Cmd: ce GetCloudScriptUrl
+LogPlayFab: Request: {
+    "Version": 1,
+    "Testing": false
+}
+LogPlayFab: Response : {
+    "code": 200,
+    "status": "OK",
+    "data":
+    {
+        "Url": "https://YOUR_GAME_TITLE_ID.playfablogic.com/1/prod"
+    }
+}
+LogBlueprintUserMessages: [Test_C_1] GetCloudScriptUrl Success:
+Url=https://88E.playfablogic.com/1/prod
+```
+
+
 ## TestCloudScript
 
 `GetCloudScriptUrl` is a custom event that will execute cloud script given no parameters. For this test to work, the following custom cloud script must be added to return a success result.
@@ -115,6 +198,35 @@ The custom event can be invoked in the console with the following line.
 
 ```
 ce TestCloudScript
+```
+
+The output log should print output similar to the following for a success event.
+
+```
+Cmd: ce TestCloudScript
+LogPlayFab: Request: {
+    "ActionId": "testMe",
+    "Params":
+    {
+    }
+}
+LogPlayFab: Response : {
+    "code": 200,
+    "status": "OK",
+    "data":
+    {
+        "ActionId": "testMe",
+        "Version": 1,
+        "Revision": 2,
+        "Results": "Hello World",
+        "ResultsEncoded": "\"Hello World\"",
+        "ActionLog": "",
+        "ExecutionTime": 0
+    }
+}
+LogJson:Warning: Field Results is of the wrong type.
+LogJson:Error: Json Value of type 'Null' used as a 'Object'.
+LogBlueprintUserMessages: [Test_C_1] TestCloudScript Success: "Hello World"
 ```
 
 
