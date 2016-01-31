@@ -73,6 +73,14 @@ In the editor the developer console can be opened by pressing the tilda (~) key.
 
 ## Android
 
+`Verify Peer` may need to be disabled to allow `HTTPS` traffic to communicate with the server on Android.
+
+```
+Edit->Project Settings->Engine->Network->Libcurl->Verify Peer (Set to OFF)
+```
+
+![04_AndroidNetworkVerifyPeer](Images/04_AndroidNetworkVerifyPeer.png)
+
 Make sure that the console is enabled in project settings to use the developer console on Android.
 
 ```
