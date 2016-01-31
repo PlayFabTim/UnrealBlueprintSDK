@@ -60,9 +60,30 @@ Existing Projects:
 * In Visual Studio, "Rebuild Solution" - This process may take several minutes
 * You should now be able to create blueprints that utilize PlayFab API calls
 
+
+# Developer Console
+
+The `Developer Console` allows execution of custom commands which can be used to invoke a `CustomEvent` in the `Level Blueprint`.
+
+
+## UE4 Editor
+
+In the editor the developer console can be opened by pressing the tilda (~) key.
+
+
+## Android
+
+Make sure that the console is enabled in project settings to use the developer console on Android.
+
+```
+Edit->Project Settings->Input->Mobile->Show Console on Four Finger Tap->True
+```
+
+
 # Blueprint Custom Events
 
 Follow the `Blueprint Tutorial` below to populate the `Game Title Id` before invoking the following `Blueprint Custom Events`.
+
 
 ## TestRegister
 
@@ -74,6 +95,12 @@ The custom event can be invoked in the console with the following line.
 
 ```
 ce TestRegister "myUsername" "email@email.com" password
+```
+
+On Android, the custom event can be invoked in the console and the command can be entered over `ADB` with the following line.
+
+```
+adb shell input text "ce%sTestRegister%s\\""myUsername\\"""%s\\"""email@email.com\\"""%spassword"
 ```
 
 The output log should print output similar to the following for a success event.
@@ -123,6 +150,12 @@ The custom event can be invoked in the console with the following line.
 ce TestLogin "email@email.com" password
 ```
 
+On Android, the custom event can be invoked in the console and the command can be entered over `ADB` with the following line.
+
+```
+adb shell input text "ce%sTestLogin%s\\""email@email.com\\"""%spassword"
+```
+
 The output log should print output similar to the following for a success event.
 
 ```
@@ -164,6 +197,12 @@ The custom event can be invoked in the console with the following line.
 ce GetCloudScriptUrl
 ```
 
+On Android, the custom event can be invoked in the console and the command can be entered over `ADB` with the following line.
+
+```
+adb shell input text "ce%sGetCloudScriptUrl"
+```
+
 The output log should print output similar to the following for a success event.
 
 ```
@@ -199,6 +238,12 @@ The custom event can be invoked in the console with the following line.
 
 ```
 ce TestCloudScript
+```
+
+On Android, the custom event can be invoked in the console and the command can be entered over `ADB` with the following line.
+
+```
+adb shell input text "ce%sTestCloudScript"
 ```
 
 The output log should print output similar to the following for a success event.
