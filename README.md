@@ -79,6 +79,14 @@ Make sure that the console is enabled in project settings to use the developer c
 Edit->Project Settings->Input->Mobile->Show Console on Four Finger Tap->True
 ```
 
+Four finger tap will open the console on an `Android` tablet. The console command can be entered and then tap `Ok` to execute.
+
+The `ADB` logcat will display the console logs which show any `PrintString` blueprints that were used.
+
+```
+adb logcat
+```
+
 
 # Blueprint Custom Events
 
