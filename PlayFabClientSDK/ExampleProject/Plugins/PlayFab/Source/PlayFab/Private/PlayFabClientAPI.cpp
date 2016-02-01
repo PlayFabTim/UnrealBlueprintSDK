@@ -210,12 +210,81 @@ UPlayFabClientAPI* UPlayFabClientAPI::LoginWithEmailAddress(FClientLoginWithEmai
         OutRestJsonObj->SetStringField(TEXT("Password"), request.Password);
     }
 
-
-
     // Add Request to manager
     manager->SetRequestObject(OutRestJsonObj);
 
     return manager;
+}
+
+UPlayFabClientAPI* UPlayFabClientAPI::PlayFabLoginWithEmailAddress(FString email, FString password,
+	FDelegateOnSuccessLoginWithEmailAddress onSuccess,
+	FDelegateOnFailureLoginWithEmailAddress onFailure)
+{
+	// Objects containing request data
+	UPlayFabClientAPI* manager = NewObject<UPlayFabClientAPI>();
+	UPlayFabJsonObject* OutRestJsonObj = NewObject<UPlayFabJsonObject>();
+
+	manager->OnSuccessLoginWithEmailAddress = onSuccess;
+	manager->OnFailureLoginWithEmailAddress = onFailure;
+	manager->OnPlayFabResponse.AddDynamic(manager, &UPlayFabClientAPI::HelperLoginWithEmailAddress);
+
+	// Setup the request
+	manager->PlayFabRequestURL = "/Client/LoginWithEmailAddress";
+	manager->useSessionTicket = false;
+	manager->isLoginRequest = true;
+
+	// Setup request object
+	OutRestJsonObj->SetStringField(TEXT("TitleId"), IPlayFab::Get().getGameTitleId());
+	if (email.IsEmpty() || email == "")
+	{
+		OutRestJsonObj->SetFieldNull(TEXT("Email"));
+	}
+	else
+	{
+		OutRestJsonObj->SetStringField(TEXT("Email"), email);
+	}
+
+	if (password.IsEmpty() || password == "")
+	{
+		OutRestJsonObj->SetFieldNull(TEXT("Password"));
+	}
+	else
+	{
+		OutRestJsonObj->SetStringField(TEXT("Password"), password);
+	}
+
+	// Add Request to manager
+	manager->SetRequestObject(OutRestJsonObj);
+
+	manager->GetResponseObject();
+
+	return manager;
+}
+
+// LoginWithEmailAddress has been invoked, now there's a response
+void UPlayFabClientAPI::HelperLoginWithEmailAddress(FPlayFabBaseModel response, bool successful)
+{
+	FPlayFabError error = response.responseError;
+	if (error.hasError)
+	{
+		if (OnFailureLoginWithEmailAddress.IsBound())
+		{
+			OnFailureLoginWithEmailAddress.Execute(
+				error.ErrorCode,
+				error.ErrorName.IsEmpty() ? "" : error.ErrorName,
+				error.ErrorMessage.IsEmpty() ? "" : error.ErrorMessage,
+				error.ErrorDetails.IsEmpty() ? "" : error.ErrorDetails);
+		}
+	}
+	else
+	{
+		FClientLoginResult result = UPlayFabClientModelDecoder::decodeLoginResultResponse(response.responseData);
+		if (OnSuccessLoginWithEmailAddress.IsBound())
+		{
+			OnSuccessLoginWithEmailAddress.Execute(result.SessionTicket,
+				result.PlayFabId);
+		}
+	}
 }
 
 /** Signs the user in using a Facebook access token, returning a session identifier that can subsequently be used for API calls which require an authenticated user */

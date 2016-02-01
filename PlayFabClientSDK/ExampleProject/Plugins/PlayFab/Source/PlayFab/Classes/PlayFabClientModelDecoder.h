@@ -35,7 +35,7 @@ public:
         static FClientGetPhotonAuthenticationTokenResult decodeGetPhotonAuthenticationTokenResultResponse(UPlayFabJsonObject* response);
 
     /** Decode the LoginResult response object*/
-    UFUNCTION(BlueprintCallable, Category = "PlayFab | Client | Authentication Models")
+    UFUNCTION(BlueprintCallable, Category = "PlayFab | Client | Authentication Models", meta = (BlueprintInternalUseOnly = "true", DeprecatedFunction))
         static FClientLoginResult decodeLoginResultResponse(UPlayFabJsonObject* response);
 
     /** Decode the RegisterPlayFabUserResult response object*/

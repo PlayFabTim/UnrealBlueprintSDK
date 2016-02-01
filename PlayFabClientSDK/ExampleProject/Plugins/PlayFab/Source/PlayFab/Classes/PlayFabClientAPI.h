@@ -67,8 +67,22 @@ public:
         static UPlayFabClientAPI* LoginWithCustomID(FClientLoginWithCustomIDRequest request);
 
     /** Signs the user into the PlayFab account, returning a session identifier that can subsequently be used for API calls which require an authenticated user */
-    UFUNCTION(BlueprintCallable, Category = "PlayFab | Client | Authentication ", meta = (BlueprintInternalUseOnly = "true"))
+	UFUNCTION(BlueprintCallable, Category = "PlayFab | Client | Authentication ", meta = (BlueprintInternalUseOnly = "true", DeprecatedFunction))
         static UPlayFabClientAPI* LoginWithEmailAddress(FClientLoginWithEmailAddressRequest request);
+
+	// callbacks
+	DECLARE_DYNAMIC_DELEGATE_TwoParams(FDelegateOnSuccessLoginWithEmailAddress, FString, sessionTicket, FString, playFabId);
+	DECLARE_DYNAMIC_DELEGATE_FourParams(FDelegateOnFailureLoginWithEmailAddress, int32, errorCode, FString, errorName, FString, errorMessage, FString, errorDetails);
+
+	/** Signs the user into the PlayFab account, returning a session identifier that can subsequently be used for API calls which require an authenticated user */
+	UFUNCTION(BlueprintCallable, Category = "PlayFab | Client | Authentication ", meta = (BlueprintInternalUseOnly = "true"))
+		static UPlayFabClientAPI* PlayFabLoginWithEmailAddress(FString email, FString password,
+			FDelegateOnSuccessLoginWithEmailAddress onSuccess,
+			FDelegateOnFailureLoginWithEmailAddress onFailure);
+
+	// Implements FOnPlayFabClientRequestCompleted
+	UFUNCTION(BlueprintCallable, Category = "PlayFab | Client | Authentication ", meta = (BlueprintInternalUseOnly = "true"))
+	void HelperLoginWithEmailAddress(FPlayFabBaseModel response, bool successful);
 
     /** Signs the user in using a Facebook access token, returning a session identifier that can subsequently be used for API calls which require an authenticated user */
     UFUNCTION(BlueprintCallable, Category = "PlayFab | Client | Authentication ", meta = (BlueprintInternalUseOnly = "true"))
@@ -633,6 +647,9 @@ public:
 private:
     /** Internal bind function for the IHTTPRequest::OnProcessRequestCompleted() event */
     void OnProcessRequestComplete(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
+
+	FDelegateOnSuccessLoginWithEmailAddress OnSuccessLoginWithEmailAddress;
+	FDelegateOnFailureLoginWithEmailAddress OnFailureLoginWithEmailAddress;
 
 protected:
 

@@ -9,13 +9,30 @@ void FPlayFabError::decodeError(UPlayFabJsonObject* responseData)
 {
 
     // Check if we have an error
-    if (int(responseData->GetNumberField("code")) != 200) // We have an error
+	int code = 0;
+	if (responseData->HasField("code"))
+	{
+		code = int(responseData->GetNumberField("code"));
+	}
+    if (code != 200) // We have an error
     {
         hasError = true;
-        ErrorCode = int(responseData->GetNumberField("errorCode"));
-        ErrorName = responseData->GetStringField("error");
-        ErrorMessage = responseData->GetStringField("errorMessage");
-        ErrorDetails = responseData->GetStringField("errorDetails");
+		if (responseData->HasField("errorCode"))
+		{
+			ErrorCode = int(responseData->GetNumberField("errorCode"));
+		}
+		if (responseData->HasField("error"))
+		{
+			ErrorName = responseData->GetStringField("error");
+		}
+		if (responseData->HasField("errorMessage"))
+		{
+			ErrorMessage = responseData->GetStringField("errorMessage");
+		}
+		if (responseData->HasField("errorDetails"))
+		{
+			ErrorDetails = responseData->GetStringField("errorDetails");
+		}
     }
     else { hasError = false; }
 
