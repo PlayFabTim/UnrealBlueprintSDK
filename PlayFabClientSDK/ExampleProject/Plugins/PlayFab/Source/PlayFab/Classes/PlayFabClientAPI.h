@@ -535,8 +535,22 @@ public:
     // Server-Side Cloud Script
     //////////////////////////////////////////////////////
     /** Retrieves the title-specific URL for Cloud Script servers. This must be queried once, prior  to making any calls to RunCloudScript. */
-    UFUNCTION(BlueprintCallable, Category = "PlayFab | Client | Server-Side Cloud Script ", meta = (BlueprintInternalUseOnly = "true"))
+    UFUNCTION(BlueprintCallable, Category = "PlayFab | Client | Server-Side Cloud Script ", meta = (BlueprintInternalUseOnly = "true", DeprecatedFunction))
         static UPlayFabClientAPI* GetCloudScriptUrl(FClientGetCloudScriptUrlRequest request);
+
+	// callbacks
+	DECLARE_DYNAMIC_DELEGATE_OneParam(FDelegateOnSuccessGetCloudScriptUrl, FString, url);
+	DECLARE_DYNAMIC_DELEGATE_FourParams(FDelegateOnFailureGetCloudScriptUrl, int32, errorCode, FString, errorName, FString, errorMessage, FString, errorDetails);
+
+	/** Retrieves the title-specific URL for Cloud Script servers. This must be queried once, prior  to making any calls to RunCloudScript. */
+	UFUNCTION(BlueprintCallable, Category = "PlayFab | Client | Server-Side Cloud Script ", meta = (BlueprintInternalUseOnly = "true"))
+		static UPlayFabClientAPI* PlayFabGetCloudScriptUrl(int32 version, bool testing,
+			FDelegateOnSuccessGetCloudScriptUrl onSuccess,
+			FDelegateOnFailureGetCloudScriptUrl onFailure);
+
+	// Implements FOnPlayFabClientRequestCompleted
+	UFUNCTION(BlueprintCallable, Category = "PlayFab | Client | Server-Side Cloud Script ", meta = (BlueprintInternalUseOnly = "true"))
+		void HelperGetCloudScriptUrl(FPlayFabBaseModel response, bool successful);
 
     /** Triggers a particular server action, passing the provided inputs to the hosted Cloud Script. An action in this context is a handler in the JavaScript. NOTE: Before calling this API, you must call GetCloudScriptUrl to be assigned a Cloud Script server URL. When using an official PlayFab SDK, this URL is stored internally in the SDK, but GetCloudScriptUrl must still be manually called. */
     UFUNCTION(BlueprintCallable, Category = "PlayFab | Client | Server-Side Cloud Script ", meta = (BlueprintInternalUseOnly = "true"))
@@ -667,6 +681,9 @@ private:
 
 	FDelegateOnSuccessRegisterPlayFabUser OnSuccessRegisterPlayFabUser;
 	FDelegateOnFailureRegisterPlayFabUser OnFailureRegisterPlayFabUser;
+
+	FDelegateOnSuccessGetCloudScriptUrl OnSuccessGetCloudScriptUrl;
+	FDelegateOnFailureGetCloudScriptUrl OnFailureGetCloudScriptUrl;
 
 protected:
 

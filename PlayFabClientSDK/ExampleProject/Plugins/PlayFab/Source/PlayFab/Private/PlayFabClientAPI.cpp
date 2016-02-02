@@ -4017,6 +4017,60 @@ UPlayFabClientAPI* UPlayFabClientAPI::GetCloudScriptUrl(FClientGetCloudScriptUrl
     return manager;
 }
 
+/** Retrieves the title-specific URL for Cloud Script servers. This must be queried once, prior  to making any calls to RunCloudScript. */
+UPlayFabClientAPI* UPlayFabClientAPI::PlayFabGetCloudScriptUrl(int32 version, bool testing,
+	FDelegateOnSuccessGetCloudScriptUrl onSuccess,
+	FDelegateOnFailureGetCloudScriptUrl onFailure)
+{
+	// Objects containing request data
+	UPlayFabClientAPI* manager = NewObject<UPlayFabClientAPI>();
+	UPlayFabJsonObject* OutRestJsonObj = NewObject<UPlayFabJsonObject>();
+
+	manager->OnSuccessGetCloudScriptUrl = onSuccess;
+	manager->OnFailureGetCloudScriptUrl = onFailure;
+	manager->OnPlayFabResponse.AddDynamic(manager, &UPlayFabClientAPI::HelperGetCloudScriptUrl);
+
+	// Setup the request
+	manager->PlayFabRequestURL = "/Client/GetCloudScriptUrl";
+	manager->useSessionTicket = true;
+
+
+	// Setup request object
+	OutRestJsonObj->SetNumberField(TEXT("Version"), version);
+	OutRestJsonObj->SetBoolField(TEXT("Testing"), testing);
+
+
+	// Add Request to manager
+	manager->SetRequestObject(OutRestJsonObj);
+
+	return manager;
+}
+
+// GetCloudScriptUrl has been invoked, now there's a response
+void UPlayFabClientAPI::HelperGetCloudScriptUrl(FPlayFabBaseModel response, bool successful)
+{
+	FPlayFabError error = response.responseError;
+	if (error.hasError)
+	{
+		if (OnFailureGetCloudScriptUrl.IsBound())
+		{
+			OnFailureGetCloudScriptUrl.Execute(
+				error.ErrorCode,
+				error.ErrorName.IsEmpty() ? "" : error.ErrorName,
+				error.ErrorMessage.IsEmpty() ? "" : error.ErrorMessage,
+				error.ErrorDetails.IsEmpty() ? "" : error.ErrorDetails);
+		}
+	}
+	else
+	{
+		FClientGetCloudScriptUrlResult result = UPlayFabClientModelDecoder::decodeGetCloudScriptUrlResultResponse(response.responseData);
+		if (OnSuccessGetCloudScriptUrl.IsBound())
+		{
+			OnSuccessGetCloudScriptUrl.Execute(result.Url);
+		}
+	}
+}
+
 /** Triggers a particular server action, passing the provided inputs to the hosted Cloud Script. An action in this context is a handler in the JavaScript. NOTE: Before calling this API, you must call GetCloudScriptUrl to be assigned a Cloud Script server URL. When using an official PlayFab SDK, this URL is stored internally in the SDK, but GetCloudScriptUrl must still be manually called. */
 UPlayFabClientAPI* UPlayFabClientAPI::RunCloudScript(FClientRunCloudScriptRequest request)
 {

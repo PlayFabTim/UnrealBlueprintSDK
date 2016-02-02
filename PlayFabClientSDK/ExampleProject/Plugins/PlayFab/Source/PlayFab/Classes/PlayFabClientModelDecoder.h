@@ -39,7 +39,7 @@ public:
         static FClientLoginResult decodeLoginResultResponse(UPlayFabJsonObject* response);
 
     /** Decode the RegisterPlayFabUserResult response object*/
-    UFUNCTION(BlueprintCallable, Category = "PlayFab | Client | Authentication Models")
+    UFUNCTION(BlueprintCallable, Category = "PlayFab | Client | Authentication Models", meta = (BlueprintInternalUseOnly = "true", DeprecatedFunction))
         static FClientRegisterPlayFabUserResult decodeRegisterPlayFabUserResultResponse(UPlayFabJsonObject* response);
 
 
@@ -427,7 +427,7 @@ public:
     //////////////////////////////////////////////////////
 
     /** Decode the GetCloudScriptUrlResult response object*/
-    UFUNCTION(BlueprintCallable, Category = "PlayFab | Client | Server-Side Cloud Script Models")
+    UFUNCTION(BlueprintCallable, Category = "PlayFab | Client | Server-Side Cloud Script Models", meta = (BlueprintInternalUseOnly = "true", DeprecatedFunction))
         static FClientGetCloudScriptUrlResult decodeGetCloudScriptUrlResultResponse(UPlayFabJsonObject* response);
 
     /** Decode the RunCloudScriptResult response object*/
