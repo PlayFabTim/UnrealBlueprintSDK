@@ -121,9 +121,23 @@ public:
         static UPlayFabClientAPI* LoginWithXbox(FClientLoginWithXboxRequest request);
 
     /** Registers a new Playfab user account, returning a session identifier that can subsequently be used for API calls which require an authenticated user. You must supply either a username or an email address. */
-    UFUNCTION(BlueprintCallable, Category = "PlayFab | Client | Authentication ", meta = (BlueprintInternalUseOnly = "true"))
+    UFUNCTION(BlueprintCallable, Category = "PlayFab | Client | Authentication ", meta = (BlueprintInternalUseOnly = "true", DeprecatedFunction))
         static UPlayFabClientAPI* RegisterPlayFabUser(FClientRegisterPlayFabUserRequest request);
 
+	DECLARE_DYNAMIC_DELEGATE_ThreeParams(FDelegateOnSuccessRegisterPlayFabUser, FString, sessionTicket, FString, playFabId, FString, username);
+	DECLARE_DYNAMIC_DELEGATE_FourParams(FDelegateOnFailureRegisterPlayFabUser, int32, errorCode, FString, errorName, FString, errorMessage, FString, errorDetails);
+
+	/** Registers a new Playfab user account, returning a session identifier that can subsequently be used for API calls which require an authenticated user. You must supply either a username or an email address. */
+	UFUNCTION(BlueprintCallable, Category = "PlayFab | Client | Authentication ", meta = (BlueprintInternalUseOnly = "true"))
+		static UPlayFabClientAPI* PlayFabRegisterPlayFabUser(FString username, FString email, FString password,
+			bool requireBothUsernameAndEmail,
+			FString displayName, FString origination,
+			FDelegateOnSuccessRegisterPlayFabUser onSuccess,
+			FDelegateOnFailureRegisterPlayFabUser onFailure);
+
+	// Implements FOnPlayFabClientRequestCompleted
+	UFUNCTION(BlueprintCallable, Category = "PlayFab | Client | Authentication ", meta = (BlueprintInternalUseOnly = "true"))
+		void HelperRegisterPlayFabUser(FPlayFabBaseModel response, bool successful);
 
 
     ///////////////////////////////////////////////////////
@@ -650,6 +664,9 @@ private:
 
 	FDelegateOnSuccessLoginWithEmailAddress OnSuccessLoginWithEmailAddress;
 	FDelegateOnFailureLoginWithEmailAddress OnFailureLoginWithEmailAddress;
+
+	FDelegateOnSuccessRegisterPlayFabUser OnSuccessRegisterPlayFabUser;
+	FDelegateOnFailureRegisterPlayFabUser OnFailureRegisterPlayFabUser;
 
 protected:
 

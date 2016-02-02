@@ -706,6 +706,107 @@ UPlayFabClientAPI* UPlayFabClientAPI::RegisterPlayFabUser(FClientRegisterPlayFab
     return manager;
 }
 
+/** Registers a new Playfab user account, returning a session identifier that can subsequently be used for API calls which require an authenticated user. You must supply either a username or an email address. */
+UPlayFabClientAPI* UPlayFabClientAPI::PlayFabRegisterPlayFabUser(FString username, FString email, FString password,
+	bool requireBothUsernameAndEmail,
+	FString displayName, FString origination,
+	FDelegateOnSuccessRegisterPlayFabUser onSuccess,
+	FDelegateOnFailureRegisterPlayFabUser onFailure)
+{
+	// Objects containing request data
+	UPlayFabClientAPI* manager = NewObject<UPlayFabClientAPI>();
+	UPlayFabJsonObject* OutRestJsonObj = NewObject<UPlayFabJsonObject>();
+
+	manager->OnSuccessRegisterPlayFabUser = onSuccess;
+	manager->OnFailureRegisterPlayFabUser = onFailure;
+	manager->OnPlayFabResponse.AddDynamic(manager, &UPlayFabClientAPI::HelperRegisterPlayFabUser);
+
+	// Setup the request
+	manager->PlayFabRequestURL = "/Client/RegisterPlayFabUser";
+	manager->useSessionTicket = false;
+
+
+	// Setup request object
+	OutRestJsonObj->SetStringField(TEXT("TitleId"), IPlayFab::Get().getGameTitleId());
+	if (username.IsEmpty() || username == "")
+	{
+		OutRestJsonObj->SetFieldNull(TEXT("Username"));
+	}
+	else
+	{
+		OutRestJsonObj->SetStringField(TEXT("Username"), username);
+	}
+
+	if (email.IsEmpty() || email == "")
+	{
+		OutRestJsonObj->SetFieldNull(TEXT("Email"));
+	}
+	else
+	{
+		OutRestJsonObj->SetStringField(TEXT("Email"), email);
+	}
+
+	if (password.IsEmpty() || password == "")
+	{
+		OutRestJsonObj->SetFieldNull(TEXT("Password"));
+	}
+	else
+	{
+		OutRestJsonObj->SetStringField(TEXT("Password"), password);
+	}
+
+	OutRestJsonObj->SetBoolField(TEXT("RequireBothUsernameAndEmail"), requireBothUsernameAndEmail);
+	if (displayName.IsEmpty() || displayName == "")
+	{
+		OutRestJsonObj->SetFieldNull(TEXT("DisplayName"));
+	}
+	else
+	{
+		OutRestJsonObj->SetStringField(TEXT("DisplayName"), displayName);
+	}
+
+	if (origination.IsEmpty() || origination == "")
+	{
+		OutRestJsonObj->SetFieldNull(TEXT("Origination"));
+	}
+	else
+	{
+		OutRestJsonObj->SetStringField(TEXT("Origination"), origination);
+	}
+	
+	// Add Request to manager
+	manager->SetRequestObject(OutRestJsonObj);
+
+	return manager;
+}
+
+// RegisterPlayFabUser has been invoked, now there's a response
+void UPlayFabClientAPI::HelperRegisterPlayFabUser(FPlayFabBaseModel response, bool successful)
+{
+	FPlayFabError error = response.responseError;
+	if (error.hasError)
+	{
+		if (OnFailureRegisterPlayFabUser.IsBound())
+		{
+			OnFailureRegisterPlayFabUser.Execute(
+				error.ErrorCode,
+				error.ErrorName.IsEmpty() ? "" : error.ErrorName,
+				error.ErrorMessage.IsEmpty() ? "" : error.ErrorMessage,
+				error.ErrorDetails.IsEmpty() ? "" : error.ErrorDetails);
+		}
+	}
+	else
+	{
+		FClientRegisterPlayFabUserResult result = UPlayFabClientModelDecoder::decodeRegisterPlayFabUserResultResponse(response.responseData);
+		if (OnSuccessRegisterPlayFabUser.IsBound())
+		{
+			OnSuccessRegisterPlayFabUser.Execute(result.SessionTicket,
+				result.PlayFabId,
+				result.Username);
+		}
+	}
+}
+
 
 ///////////////////////////////////////////////////////
 // Account Management
