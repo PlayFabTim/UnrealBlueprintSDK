@@ -4104,6 +4104,76 @@ UPlayFabClientAPI* UPlayFabClientAPI::RunCloudScript(FClientRunCloudScriptReques
     return manager;
 }
 
+/** Triggers a particular server action, passing the provided inputs to the hosted Cloud Script. An action in this context is a handler in the JavaScript. NOTE: Before calling this API, you must call GetCloudScriptUrl to be assigned a Cloud Script server URL. When using an official PlayFab SDK, this URL is stored internally in the SDK, but GetCloudScriptUrl must still be manually called. */
+UPlayFabClientAPI* UPlayFabClientAPI::PlayFabRunCloudScript(FString actionId, UPlayFabJsonObject* params, FString paramsEncoded,
+	FDelegateOnSuccessRunCloudScript onSuccess,
+	FDelegateOnFailureRunCloudScript onFailure)
+{
+	// Objects containing request data
+	UPlayFabClientAPI* manager = NewObject<UPlayFabClientAPI>();
+	UPlayFabJsonObject* OutRestJsonObj = NewObject<UPlayFabJsonObject>();
+
+	manager->OnSuccessRunCloudScript = onSuccess;
+	manager->OnFailureRunCloudScript = onFailure;
+	manager->OnPlayFabResponse.AddDynamic(manager, &UPlayFabClientAPI::HelperRunCloudScript);
+
+	// Setup the request
+	manager->PlayFabRequestURL = "/Client/RunCloudScript";
+	manager->useSessionTicket = true;
+	manager->cloudScript = true;
+
+
+	// Setup request object
+	if (actionId.IsEmpty() || actionId == "")
+	{
+		OutRestJsonObj->SetFieldNull(TEXT("ActionId"));
+	}
+	else
+	{
+		OutRestJsonObj->SetStringField(TEXT("ActionId"), actionId);
+	}
+
+	if (params != NULL) OutRestJsonObj->SetObjectField(TEXT("Params"), params);
+	if (paramsEncoded != "") OutRestJsonObj->SetStringField(TEXT("ParamsEncoded"), paramsEncoded);
+
+
+	// Add Request to manager
+	manager->SetRequestObject(OutRestJsonObj);
+
+	return manager;
+}
+
+// Implements FOnPlayFabClientRequestCompleted
+void UPlayFabClientAPI::HelperRunCloudScript(FPlayFabBaseModel response, bool successful)
+{
+	FPlayFabError error = response.responseError;
+	if (error.hasError)
+	{
+		if (OnFailureRunCloudScript.IsBound())
+		{
+			OnFailureRunCloudScript.Execute(
+				error.ErrorCode,
+				error.ErrorName.IsEmpty() ? "" : error.ErrorName,
+				error.ErrorMessage.IsEmpty() ? "" : error.ErrorMessage,
+				error.ErrorDetails.IsEmpty() ? "" : error.ErrorDetails);
+		}
+	}
+	else
+	{
+		FClientRunCloudScriptResult result = UPlayFabClientModelDecoder::decodeRunCloudScriptResultResponse(response.responseData);
+		if (OnSuccessRunCloudScript.IsBound())
+		{
+			OnSuccessRunCloudScript.Execute(result.ActionId,
+				result.Version,
+				result.Revision,
+				result.Results,
+				result.ResultsEncoded,
+				result.ActionLog,
+				result.ExecutionTime);
+		}
+	}
+}
+
 
 ///////////////////////////////////////////////////////
 // Content

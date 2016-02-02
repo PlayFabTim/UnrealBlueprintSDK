@@ -431,7 +431,7 @@ public:
         static FClientGetCloudScriptUrlResult decodeGetCloudScriptUrlResultResponse(UPlayFabJsonObject* response);
 
     /** Decode the RunCloudScriptResult response object*/
-    UFUNCTION(BlueprintCallable, Category = "PlayFab | Client | Server-Side Cloud Script Models")
+    UFUNCTION(BlueprintCallable, Category = "PlayFab | Client | Server-Side Cloud Script Models", meta = (BlueprintInternalUseOnly = "true", DeprecatedFunction))
         static FClientRunCloudScriptResult decodeRunCloudScriptResultResponse(UPlayFabJsonObject* response);
 
 
