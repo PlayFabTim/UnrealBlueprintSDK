@@ -256,7 +256,7 @@ LogPlayFab: Response : {
     }
 }
 LogBlueprintUserMessages: [Test_C_1] GetCloudScriptUrl Success:
-Url=https://88E.playfablogic.com/1/prod
+Url=https://YOUR_GAME_TITLE_ID.playfablogic.com/1/prod
 ```
 
 The `OnFailure` delegate will be executed if a `PlayFabError` occurs. A failure might occur if `GetCloudScriptUrl` was invoked before the user was authenticated resulting in `Missing or invalid X-Authentication HTTP header`.
