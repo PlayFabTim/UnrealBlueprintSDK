@@ -101,9 +101,17 @@ adb logcat
 Follow the `Blueprint Tutorial` below to populate the `Game Title Id` before invoking the following `Blueprint Custom Events`.
 
 
+## Custom Event PrintPlayFabError
+
+`PlayFab Client API` methods have a failure delegate that has a `PlayFabError` parameter. A custom event that prints `PlayFabError` objects can be reused by the failure delegates. This setup uses a `PrintPlayFabError` custom event with a `PlayFabError` parameter. The `PlayFabError` is broken out into components that can be appended to a string and printed. The `PrintPlayFabError` custom event can be connected directly to a failure delegate or called from another custom event.
+
+![05_PrintPlayFabError](Images/05_PrintPlayFabError.png)
+
 ## TestRegister
 
 `TestRegister` is a custom event that registers a user given the `username`, `email`, and `password`.
+
+The `OnSuccess` delegate will be executed upon success.
 
 ![00_TestRegisterBlueprint](Images/00_TestRegisterBlueprint.png)
 
@@ -153,10 +161,16 @@ LogBlueprintUserMessages: [Test_C_1] Register Success:
 "Username":"myusername","SettingsForUser":{"NeedsAttribution":false}}}
 ```
 
+The `OnFailure` delegate will be executed if a `PlayFabError` occurs.
+
+![06_TestRegisterBlueprintFailure](Images/06_TestRegisterBlueprintFailure.png)
+
 
 ## TestLogin
 
 `TestLogin` is a custom event that will login a user given the corresponding `email` and `password`. A user must be registered before a successful login can occur.
+
+The `OnSuccess` delegate will be executed upon success.
 
 ![01_TestLoginBlueprint](Images/01_TestLoginBlueprint.png)
 
@@ -200,10 +214,16 @@ LogBlueprintUserMessages: [Test_C_1] Login Success:
 SessionTicket=LONG_SESSION_TICKET PlayFabId=EDC7CAE0DCB6FA8F
 ```
 
+The `OnFailure` delegate will be executed if a `PlayFabError` occurs.
+
+![07_TestLoginBlueprintFailure](Images/07_TestLoginBlueprintFailure.png)
+
 
 ## GetCloudScriptUrl
 
 `GetCloudScriptUrl` is a custom event that will request a cloud script url given no parameters.
+
+The `OnSuccess` delegate will be executed upon success.
 
 ![02_GetCloudScriptUrlBlueprint](Images/02_GetCloudScriptUrlBlueprint.png)
 
@@ -239,14 +259,20 @@ LogBlueprintUserMessages: [Test_C_1] GetCloudScriptUrl Success:
 Url=https://88E.playfablogic.com/1/prod
 ```
 
+The `OnFailure` delegate will be executed if a `PlayFabError` occurs. A failure might occur if `GetCloudScriptUrl` was invoked before the user was authenticated resulting in `Missing or invalid X-Authentication HTTP header`.
+
+![08_GetCloudScriptUrlBlueprintFailure](Images/08_GetCloudScriptUrlBlueprintFailure.png)
+
 
 ## TestCloudScript
 
-`GetCloudScriptUrl` is a custom event that will execute cloud script given no parameters. For this test to work, the following custom cloud script must be added to return a success result.
+`TestCloudScript` is a custom event that will execute cloud script given no parameters. For this test to work, the following custom cloud script must be added to return a success result.
 
 ```
 handlers.testMe = function(args){  return "Hello World" }
 ```
+
+The `OnSuccess` delegate will be executed upon success.
 
 ![03_TestCloudScriptBlueprint](Images/03_TestCloudScriptBlueprint.png)
 
@@ -290,6 +316,10 @@ LogJson:Warning: Field Results is of the wrong type.
 LogJson:Error: Json Value of type 'Null' used as a 'Object'.
 LogBlueprintUserMessages: [Test_C_1] TestCloudScript Success: "Hello World"
 ```
+
+The `OnFailure` delegate will be executed if a `PlayFabError` occurs. A failure might occur if `TestCloudScript` was invoked before the user was authenticated resulting in `Missing or invalid X-Authentication HTTP header`.
+
+![09_TestCloudScriptBlueprintFailure](Images/09_TestCloudScriptBlueprintFailure.png)
 
 
 5. Blueprint Tutorial:
